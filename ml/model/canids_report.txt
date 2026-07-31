@@ -1,0 +1,11 @@
+Test Accuracy: 97.79%
+CV Accuracy  : nan% ± nan%
+
+              precision    recall  f1-score   support
+
+      Benign       0.98      0.98      0.98     30000
+  Masquerade       0.98      0.98      0.98     30000
+
+    accuracy                           0.98     60000
+   macro avg       0.98      0.98      0.98     60000
+weighted avg       0.98      0.98      0.98     60000

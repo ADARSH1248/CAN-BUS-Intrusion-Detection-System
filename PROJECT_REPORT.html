@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CAN Bus IDS — Project Report</title>
+<style>
+/* ── RESET & BASE ── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;background:#fff;color:#1a1a2e;line-height:1.6}
+a{color:#0077b6;text-decoration:none}
+
+/* ── COVER PAGE ── */
+.cover{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#050d1a 0%,#0d1f3c 50%,#050d1a 100%);
+  color:#fff;text-align:center;padding:2rem;page-break-after:always}
+.cover-logo{width:80px;height:80px;background:linear-gradient(135deg,#00d4ff,#7b2ff7);
+  border-radius:16px;display:flex;align-items:center;justify-content:center;
+  font-size:2.5rem;margin:0 auto 1.5rem;box-shadow:0 0 40px rgba(0,212,255,0.4)}
+.cover h1{font-size:2.2rem;font-weight:900;letter-spacing:1px;margin-bottom:.5rem}
+.cover h1 span{color:#00d4ff}
+.cover-sub{font-size:1rem;color:#94a3b8;margin-bottom:2.5rem}
+.cover-divider{width:80px;height:3px;background:linear-gradient(90deg,#00d4ff,#7b2ff7);
+  border-radius:2px;margin:0 auto 2.5rem}
+.cover-info{background:rgba(255,255,255,0.05);border:1px solid rgba(0,212,255,0.2);
+  border-radius:12px;padding:1.5rem 2.5rem;max-width:480px;margin:0 auto}
+.cover-info p{margin:.3rem 0;font-size:.95rem}
+.cover-info .label{color:#64748b;font-size:.75rem;text-transform:uppercase;letter-spacing:1px}
+.cover-info .value{color:#e2e8f0;font-weight:600}
+.cover-badge{display:inline-block;background:rgba(0,212,255,0.15);border:1px solid rgba(0,212,255,0.3);
+  color:#00d4ff;border-radius:50px;padding:4px 16px;font-size:.75rem;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;margin-top:2rem}
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div class="cover-logo">🛡</div>
+  <h1>CAN Bus <span>Intrusion Detection</span> System</h1>
+  <p class="cover-sub">Using Machine Learning — Final Year Engineering Project</p>
+  <div class="cover-divider"></div>
+  <div class="cover-info">
+    <p><span class="label">Institution</span><br><span class="value">NMAM Institute of Technology, Nitte</span></p>
+    <p style="margin-top:.8rem"><span class="label">Department</span><br><span class="value">Computer Science &amp; Engineering</span></p>
+    <p style="margin-top:.8rem"><span class="label">Designed &amp; Developed By</span><br><span class="value">Adarsh Bhat</span></p>
+    <p style="margin-top:.8rem"><span class="label">Academic Year</span><br><span class="value">2024 – 2025</span></p>
+    <p style="margin-top:.8rem"><span class="label">Technology Stack</span><br><span class="value">Python · Flask · scikit-learn · Bootstrap 5 · Chart.js</span></p>
+  </div>
+  <div class="cover-badge">Project Source Code &amp; Implementation Report</div>
+</div>
+
+<style>
+/* ── REPORT BODY STYLES ── */
+.page{max-width:960px;margin:0 auto;padding:2.5rem 2rem}
+h2.chapter{font-size:1.5rem;font-weight:900;color:#0d1f3c;border-bottom:3px solid #00d4ff;
+  padding-bottom:.5rem;margin:2rem 0 1.2rem}
+h3.section{font-size:1.1rem;font-weight:700;color:#0077b6;margin:1.5rem 0 .6rem}
+h4.subsec{font-size:.95rem;font-weight:700;color:#1a1a2e;margin:1rem 0 .4rem}
+p{margin-bottom:.8rem;color:#334155}
+
+/* ── TABLE OF CONTENTS ── */
+.toc{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:1.5rem 2rem;margin-bottom:2rem}
+.toc h3{font-size:1rem;font-weight:700;color:#0d1f3c;margin-bottom:1rem;letter-spacing:1px;text-transform:uppercase}
+.toc ol{padding-left:1.2rem}
+.toc li{margin:.35rem 0;font-size:.9rem;color:#334155}
+.toc a{color:#0077b6}
+
+/* ── INFO BOXES ── */
+.info-box{border-radius:8px;padding:1rem 1.2rem;margin:1rem 0;font-size:.88rem}
+.info-box.blue{background:#eff6ff;border-left:4px solid #3b82f6;color:#1e3a5f}
+.info-box.green{background:#f0fdf4;border-left:4px solid #22c55e;color:#14532d}
+.info-box.red{background:#fef2f2;border-left:4px solid #ef4444;color:#7f1d1d}
+.info-box.yellow{background:#fefce8;border-left:4px solid #eab308;color:#713f12}
+.info-box .title{font-weight:700;margin-bottom:.3rem}
+
+/* ── FILE HEADER ── */
+.file-header{display:flex;align-items:center;gap:.8rem;background:#0d1f3c;
+  border-radius:8px 8px 0 0;padding:.7rem 1rem;margin-top:1.5rem}
+.file-badge{background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#000;
+  font-size:.7rem;font-weight:700;padding:2px 10px;border-radius:50px;text-transform:uppercase;letter-spacing:1px}
+.file-name{color:#e2e8f0;font-family:monospace;font-size:.9rem;font-weight:600}
+.file-desc{color:#64748b;font-size:.78rem;margin-left:auto}
+
+/* ── CODE BLOCKS ── */
+pre{background:#050d1a;color:#e2e8f0;padding:1.2rem;border-radius:0 0 8px 8px;
+  font-family:'Courier New',Consolas,monospace;font-size:.77rem;line-height:1.55;
+  overflow-x:auto;border:1px solid #1e3a5f;border-top:none;white-space:pre-wrap;word-break:break-word}
+code.inline{background:#f1f5f9;color:#0d1f3c;padding:1px 5px;border-radius:4px;
+  font-family:monospace;font-size:.85em}
+
+/* ── OUTPUT TERMINAL ── */
+.terminal{background:#0a0a0a;color:#22c55e;padding:1rem;border-radius:8px;
+  font-family:'Courier New',monospace;font-size:.77rem;line-height:1.55;
+  border:1px solid #1a2e1a;margin:1rem 0;white-space:pre-wrap;word-break:break-word}
+.terminal .t-cmd{color:#00d4ff}
+.terminal .t-warn{color:#eab308}
+.terminal .t-err{color:#ef4444}
+.terminal .t-title{color:#fff;font-weight:700}
+
+/* ── DATA TABLE ── */
+table.data-table{width:100%;border-collapse:collapse;font-size:.82rem;margin:1rem 0}
+table.data-table th{background:#0d1f3c;color:#00d4ff;padding:.6rem .8rem;text-align:left;
+  font-size:.72rem;text-transform:uppercase;letter-spacing:.5px}
+table.data-table td{padding:.5rem .8rem;border-bottom:1px solid #e2e8f0;color:#334155}
+table.data-table tr:nth-child(even) td{background:#f8fafc}
+table.data-table .badge{display:inline-block;padding:2px 8px;border-radius:50px;
+  font-size:.68rem;font-weight:700;letter-spacing:.5px}
+.badge-safe{background:#dcfce7;color:#14532d}
+.badge-warn{background:#fef9c3;color:#713f12}
+.badge-crit{background:#fee2e2;color:#7f1d1d}
+.badge-high{background:#ffedd5;color:#7c2d12}
+
+/* ── METRICS GRID ── */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:1rem 0}
+.metric-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;
+  padding:.8rem;text-align:center}
+.metric-card .num{font-size:1.8rem;font-weight:900;color:#0077b6}
+.metric-card .lbl{font-size:.72rem;color:#64748b;text-transform:uppercase;letter-spacing:1px}
+.metric-card.green .num{color:#16a34a}
+.metric-card.red .num{color:#dc2626}
+.metric-card.yellow .num{color:#ca8a04}
+
+/* ── STRUCTURE TREE ── */
+.tree{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;
+  padding:1rem 1.5rem;font-family:monospace;font-size:.82rem;line-height:1.8;color:#334155}
+.tree .dir{color:#0077b6;font-weight:700}
+.tree .file{color:#334155}
+.tree .comment{color:#94a3b8;font-style:italic}
+
+/* ── PRINT ── */
+@media print{
+  .cover{min-height:100vh}
+  h2.chapter{page-break-before:always}
+  pre,table,figure{page-break-inside:avoid}
+  body{font-size:11px}
+}
+.page-break{page-break-before:always}
+.no-break{page-break-inside:avoid}
+</style>
+
+<div class="page">
+<!-- TABLE OF CONTENTS -->
+<div class="toc">
+  <h3>📋 Table of Contents</h3>
+  <ol>
+    <li><a href="#ch1">Project Overview</a></li>
+    <li><a href="#ch2">System Architecture &amp; Project Structure</a></li>
+    <li><a href="#ch3">Dataset Description</a></li>
+    <li><a href="#ch4">Source Code — Backend (app.py)</a></li>
+    <li><a href="#ch5">Source Code — ML Predictor (ml/predictor.py)</a></li>
+    <li><a href="#ch6">Source Code — Feature Engineering (ml/features.py)</a></li>
+    <li><a href="#ch7">Source Code — Model Training (ml/train.py)</a></li>
+    <li><a href="#ch8">Frontend — Home Page (templates/index.html)</a></li>
+    <li><a href="#ch9">Frontend — Upload Page (templates/upload.html)</a></li>
+    <li><a href="#ch10">Frontend — Dashboard (templates/dashboard.html)</a></li>
+    <li><a href="#ch11">Frontend — Stylesheet (static/css/style.css)</a></li>
+    <li><a href="#ch12">Frontend — JavaScript (static/js/script.js)</a></li>
+    <li><a href="#ch13">Dependencies (requirements.txt)</a></li>
+    <li><a href="#ch14">Model Output &amp; Evaluation Results</a></li>
+    <li><a href="#ch15">System Test Output</a></li>
+  </ol>
+</div>
+
+<!-- CH 1: OVERVIEW -->
+<h2 class="chapter" id="ch1">1. Project Overview</h2>
+<p>The <strong>CAN Bus Intrusion Detection System (CAN IDS)</strong> is a Final Year Engineering Project developed at the Department of Computer Science &amp; Engineering, NMAM Institute of Technology, Nitte. The system applies Machine Learning to detect and classify cyber-attacks on vehicle Controller Area Network (CAN) Bus communications.</p>
+
+<div class="info-box blue">
+  <div class="title">🎯 Objective</div>
+  Upload a CSV file containing raw CAN Bus frames → automatically extract features → run a trained Random Forest classifier → display an interactive dashboard showing attack types, vehicle status, charts, and per-frame predictions.
+</div>
+
+<h3 class="section">1.1 Attack Classes Detected</h3>
+<table class="data-table">
+<thead><tr><th>Label</th><th>Integer Code</th><th>Description</th><th>Risk</th></tr></thead>
+<tbody>
+<tr><td>Benign</td><td>0</td><td>Normal, legitimate CAN Bus traffic</td><td><span class="badge badge-safe">SAFE</span></td></tr>
+<tr><td>Real Attack</td><td>1</td><td>Active malicious CAN frame injection targeting ECUs</td><td><span class="badge badge-crit">CRITICAL</span></td></tr>
+<tr><td>Masquerade</td><td>2</td><td>Attacker impersonates a legitimate ECU node</td><td><span class="badge badge-warn">MEDIUM</span></td></tr>
+<tr><td>Suspension</td><td>3</td><td>Disruption of suspension-related ECU control signals</td><td><span class="badge badge-high">HIGH</span></td></tr>
+</tbody>
+</table>
+
+<h3 class="section">1.2 Technology Stack</h3>
+<table class="data-table">
+<thead><tr><th>Layer</th><th>Technology</th><th>Version</th></tr></thead>
+<tbody>
+<tr><td>Backend Framework</td><td>Flask (Python)</td><td>3.0.3</td></tr>
+<tr><td>ML Library</td><td>scikit-learn</td><td>1.6.1</td></tr>
+<tr><td>Data Processing</td><td>pandas / numpy</td><td>2.2.2 / 1.26.4</td></tr>
+<tr><td>Model Persistence</td><td>joblib</td><td>1.4.2</td></tr>
+<tr><td>UI Framework</td><td>Bootstrap 5</td><td>5.3.2</td></tr>
+<tr><td>Charts</td><td>Chart.js</td><td>4.4.2</td></tr>
+<tr><td>Icons</td><td>Font Awesome</td><td>6.5.0</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="page">
+<!-- CH 2: ARCHITECTURE -->
+<h2 class="chapter" id="ch2">2. System Architecture &amp; Project Structure</h2>
+<h3 class="section">2.1 Data Flow</h3>
+<div class="info-box blue">
+  <strong>Upload CSV</strong> → Flask saves file → <strong>/predict</strong> route calls CANPredictor → Feature engineering (19 features) → Random Forest inference → Results saved to JSON → <strong>/dashboard</strong> renders Jinja2 template with real data → Chart.js visualises results
+</div>
+
+<h3 class="section">2.2 Project File Structure</h3>
+<div class="tree">
+<span class="dir">CAN Bus Intrusion Detection System/</span>
+│
+├── <span class="file">app.py</span>                    <span class="comment">← Flask entry point (routes, session, file handling)</span>
+├── <span class="file">requirements.txt</span>          <span class="comment">← Pinned Python dependencies</span>
+├── <span class="file">setup_and_run.bat</span>         <span class="comment">← One-click Windows launcher</span>
+│
+├── <span class="dir">ml/</span>                          <span class="comment">← Machine Learning package</span>
+│   ├── <span class="file">__init__.py</span>
+│   ├── <span class="file">predictor.py</span>             <span class="comment">← CANPredictor class (inference pipeline)</span>
+│   ├── <span class="file">features.py</span>              <span class="comment">← Feature engineering (used by training)</span>
+│   ├── <span class="file">train.py</span>                 <span class="comment">← Model training script (CLI)</span>
+│   └── <span class="dir">model/</span>
+│       ├── <span class="file">canids_model.joblib</span>  <span class="comment">← Trained Random Forest model</span>
+│       └── <span class="file">canids_report.txt</span>    <span class="comment">← Classification report from training</span>
+│
+├── <span class="dir">templates/</span>                   <span class="comment">← Jinja2 HTML templates</span>
+│   ├── <span class="file">index.html</span>               <span class="comment">← Landing / home page</span>
+│   ├── <span class="file">upload.html</span>              <span class="comment">← Dataset upload + processing overlay</span>
+│   └── <span class="file">dashboard.html</span>           <span class="comment">← Results dashboard</span>
+│
+├── <span class="dir">static/</span>
+│   ├── <span class="dir">css/style.css</span>            <span class="comment">← Master dark theme stylesheet</span>
+│   ├── <span class="dir">js/script.js</span>             <span class="comment">← Canvas, upload, charts, sidebar, table</span>
+│   ├── <span class="dir">uploads/</span>                 <span class="comment">← Uploaded CSV files</span>
+│   └── <span class="dir">results/</span>                 <span class="comment">← Prediction result JSON files</span>
+</div>
+
+<!-- CH 3: DATASET -->
+<h2 class="chapter" id="ch3">3. Dataset Description</h2>
+<p>The combined dataset <code class="inline">CAN_Multiclass_Dataset.csv</code> was assembled from four separate CSV files captured from real vehicle CAN Bus hardware.</p>
+
+<table class="data-table">
+<thead><tr><th>Source File</th><th>Label Code</th><th>Class</th><th>Row Count</th></tr></thead>
+<tbody>
+<tr><td>Benign.csv</td><td>0</td><td>Benign</td><td>368,296</td></tr>
+<tr><td>Real_attacks.csv</td><td>1</td><td>Real Attack</td><td>508,148</td></tr>
+<tr><td>Masquerade_attacks.csv</td><td>2</td><td>Masquerade</td><td>507,995</td></tr>
+<tr><td>Suspension_attacks.csv</td><td>3</td><td>Suspension</td><td>591,000</td></tr>
+<tr style="font-weight:700"><td>Combined Total</td><td>—</td><td>4 classes</td><td>1,975,439</td></tr>
+</tbody>
+</table>
+
+<h3 class="section">3.1 CSV Column Schema</h3>
+<table class="data-table">
+<thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Timestamp</td><td>float64</td><td>Unix epoch timestamp (e.g. 1.698233e+09)</td></tr>
+<tr><td>CAN_ID</td><td>int64</td><td>CAN frame arbitration ID (decimal, e.g. 153, 909)</td></tr>
+<tr><td>Byte1 – Byte8</td><td>int64</td><td>Eight data payload bytes (0–255 each)</td></tr>
+<tr><td>Label</td><td>int64</td><td>Ground truth class: 0=Benign, 1=Real, 2=Masquerade, 3=Suspension</td></tr>
+</tbody>
+</table>
+
+<h3 class="section">3.2 Sample Raw Data</h3>
+<div class="terminal">Timestamp        CAN_ID  Byte1  Byte2  Byte3  Byte4  Byte5  Byte6  Byte7  Byte8  Label
+1.683206e+09       220      5     68    127      0      0    161     15      1      3
+1.683206e+09      1473     68      1     26     16     97      3      0      9      3
+1.698233e+09       164      0      8     10      2      0      0      0      0      2
+1.698233e+09       153     32    128     16    255      0    255      0    174      1
+1.683278e+09       420    192     20    152    200    252     79    106      0      0
+</div>
+</div>
+
+<div class="page">
+<!-- CH 4: APP.PY -->
+<h2 class="chapter" id="ch4">4. Source Code — Backend (app.py)</h2>
+<p>The main Flask application. Handles file upload, routes requests through the ML pipeline, and stores large prediction results on disk (bypassing Flask's 4KB session cookie limit).</p>
+
+<div class="info-box blue">
+  <strong>Key Routes:</strong> &nbsp;
+  <code class="inline">GET /</code> → Home &nbsp;|&nbsp;
+  <code class="inline">POST /upload</code> → Save CSV &nbsp;|&nbsp;
+  <code class="inline">GET /predict</code> → Run ML &nbsp;|&nbsp;
+  <code class="inline">GET /dashboard</code> → Show results &nbsp;|&nbsp;
+  <code class="inline">GET /api/results</code> → JSON endpoint
+</div>
+
+<div class="file-header">
+  <span class="file-badge">Python · Flask</span>
+  <span class="file-name">app.py</span>
+  <span class="file-desc">Main application — 120 lines</span>
+</div>
+<pre>"""
+CAN Bus Intrusion Detection System
+Flask Backend — Main Application
+"""
+
+import os
+import json
+import uuid
+import traceback
+from flask import (
+    Flask, render_template, request, redirect,
+    url_for, session, jsonify, flash
+)
+from werkzeug.utils import secure_filename
+
+from ml.predictor import CANPredictor
+
+# ─── APP CONFIG ───────────────────────────────────────────────────────────
+app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY", "canids-secret-2025")
+
+UPLOAD_FOLDER  = os.path.join("static", "uploads")
+RESULTS_FOLDER = os.path.join("static", "results")   # ← stores result JSON files
+ALLOWED_EXTENSIONS    = {"csv"}
+MAX_CONTENT_LENGTH    = 500 * 1024 * 1024   # 500 MB
+
+app.config["UPLOAD_FOLDER"]      = UPLOAD_FOLDER
+app.config["MAX_CONTENT_LENGTH"] = MAX_CONTENT_LENGTH
+
+os.makedirs(UPLOAD_FOLDER,  exist_ok=True)
+os.makedirs(RESULTS_FOLDER, exist_ok=True)
+
+# Load ML model once at startup
+predictor = CANPredictor()
+
+# ─── HELPERS ──────────────────────────────────────────────────────────────
+def allowed_file(filename: str) -> bool:
+    return "." in filename and \
+           filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def save_results(results: dict) -> str:
+    """Write results dict to a JSON file; return the filename."""
+    fname = f"result_{uuid.uuid4().hex}.json"
+    fpath = os.path.join(RESULTS_FOLDER, fname)
+    with open(fpath, "w", encoding="utf-8") as f:
+        json.dump(results, f)
+    return fname
+
+def load_results(fname: str) -> dict | None:
+    """Read results from a JSON file by filename."""
+    if not fname:
+        return None
+    fpath = os.path.join(RESULTS_FOLDER, fname)
+    if not os.path.exists(fpath):
+        return None
+    with open(fpath, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+# ─── ROUTES ───────────────────────────────────────────────────────────────
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/upload", methods=["GET", "POST"])
+def upload():
+    if request.method == "GET":
+        return render_template("upload.html")
+    if "file" not in request.files:
+        flash("No file part in the request.", "error")
+        return redirect(url_for("upload"))
+    file = request.files["file"]
+    if file.filename == "":
+        flash("No file selected.", "error")
+        return redirect(url_for("upload"))
+    if not allowed_file(file.filename):
+        flash("Only .csv files are allowed.", "error")
+        return redirect(url_for("upload"))
+    original_name = secure_filename(file.filename)
+    unique_name   = f"{uuid.uuid4().hex}_{original_name}"
+    save_path     = os.path.join(app.config["UPLOAD_FOLDER"], unique_name)
+    file.save(save_path)
+    session["uploaded_file"]  = save_path
+    session["original_name"]  = original_name
+    return redirect(url_for("predict"))
+
+@app.route("/predict")
+def predict():
+    filepath = session.get("uploaded_file")
+    if not filepath or not os.path.exists(filepath):
+        flash("No uploaded file found. Please upload again.", "error")
+        return redirect(url_for("upload"))
+    try:
+        results = predictor.predict_csv(filepath)
+        # KEY FIX: save large results to disk, store only filename in session
+        result_file = save_results(results)
+        session["result_file"] = result_file
+        return redirect(url_for("dashboard"))
+    except Exception as e:
+        traceback.print_exc()
+        flash(f"Prediction error: {str(e)}", "error")
+        return redirect(url_for("upload"))
+
+@app.route("/dashboard")
+def dashboard():
+    result_file = session.get("result_file")
+    results     = load_results(result_file)
+    if results is None:
+        flash("No results found. Please upload a dataset first.", "warning")
+        return redirect(url_for("upload"))
+    return render_template("dashboard.html", results=results)
+
+@app.route("/api/results")
+def api_results():
+    result_file = session.get("result_file")
+    results     = load_results(result_file)
+    if results is None:
+        return jsonify({"error": "No results in session"}), 404
+    return jsonify(results)
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)</pre>
+</div>
+
+<div class="page">
+<!-- CH 5: PREDICTOR -->
+<h2 class="chapter" id="ch5">5. Source Code — ML Predictor (ml/predictor.py)</h2>
+<p>Loads the trained Random Forest model and reproduces the <strong>exact feature engineering</strong> from the training notebook. Builds a structured results dictionary consumed by the Flask dashboard template.</p>
+
+<div class="info-box green">
+  <strong>19 Input Features (matching notebook):</strong> Timestamp, CAN_ID, Byte1–8, PayloadSum, PayloadMean, PayloadStd, PayloadMax, PayloadMin, PayloadRange, ZeroBytes, NonZeroBytes, TimeDiff
+</div>
+
+<div class="file-header">
+  <span class="file-badge">Python · sklearn</span>
+  <span class="file-name">ml/predictor.py</span>
+  <span class="file-desc">Inference pipeline — 170 lines</span>
+</div>
+<pre>"""
+CAN Bus IDS — Predictor
+Input CSV: Timestamp, CAN_ID, Byte1-8  [Label column is ignored]
+Label map: 0=Benign  1=Real Attack  2=Masquerade  3=Suspension
+"""
+
+import os, joblib
+import numpy as np
+import pandas as pd
+from datetime import datetime
+
+MODEL_PATH  = os.path.join("ml", "model", "canids_model.joblib")
+SCALER_PATH = os.path.join("ml", "model", "canids_scaler.joblib")
+
+LABEL_MAP = { 0:"Benign", 1:"Real Attack", 2:"Masquerade", 3:"Suspension" }
+RISK_MAP  = { "Benign":"Low", "Masquerade":"Medium",
+              "Real Attack":"Critical", "Suspension":"High" }
+STATUS_MAP= { "Benign":"Normal", "Masquerade":"Suspicious",
+              "Real Attack":"Attack", "Suspension":"Attack" }
+
+BYTE_COLS     = ["Byte1","Byte2","Byte3","Byte4","Byte5","Byte6","Byte7","Byte8"]
+FEATURE_COLS  = [
+    "Timestamp","CAN_ID",
+    "Byte1","Byte2","Byte3","Byte4","Byte5","Byte6","Byte7","Byte8",
+    "PayloadSum","PayloadMean","PayloadStd","PayloadMax","PayloadMin",
+    "PayloadRange","ZeroBytes","NonZeroBytes","TimeDiff",
+]
+
+def _engineer_features(df: pd.DataFrame) -> pd.DataFrame:
+    """Reproduce feature engineering from Combined_CanBus.ipynb verbatim."""
+    d = df.copy()
+    for col in BYTE_COLS:
+        if col in d.columns:
+            d[col] = pd.to_numeric(d[col], errors="coerce").fillna(0)
+    payload = d[BYTE_COLS] if all(c in d.columns for c in BYTE_COLS) \
+              else pd.DataFrame(np.zeros((len(d),8)), columns=BYTE_COLS)
+    d["PayloadSum"]   = payload.sum(axis=1)
+    d["PayloadMean"]  = payload.mean(axis=1)
+    d["PayloadStd"]   = payload.std(axis=1)
+    d["PayloadMax"]   = payload.max(axis=1)
+    d["PayloadMin"]   = payload.min(axis=1)
+    d["PayloadRange"] = d["PayloadMax"] - d["PayloadMin"]
+    d["ZeroBytes"]    = (payload == 0).sum(axis=1)
+    d["NonZeroBytes"] = (payload != 0).sum(axis=1)
+    d["TimeDiff"]     = pd.to_numeric(d.get("Timestamp",0), errors="coerce") \
+                          .diff().fillna(0)
+    available = [c for c in FEATURE_COLS if c in d.columns]
+    return d[available].fillna(0)
+
+class CANPredictor:
+    def __init__(self):
+        self.model = self.scaler = None
+        self._load()
+
+    def _load(self):
+        if os.path.exists(MODEL_PATH):
+            self.model = joblib.load(MODEL_PATH)
+            print(f"[IDS] ✓ Model loaded → {MODEL_PATH}")
+            if os.path.exists(SCALER_PATH):
+                self.scaler = joblib.load(SCALER_PATH)
+
+    def predict_csv(self, filepath: str) -> dict:
+        df = pd.read_csv(filepath, low_memory=False)
+        for col in ["Label","label","class","target"]:
+            if col in df.columns:
+                df = df.drop(columns=[col])
+        if len(df) > 50_000:
+            df = df.sample(50_000, random_state=42).reset_index(drop=True)
+        else:
+            df = df.reset_index(drop=True)
+
+        features = _engineer_features(df)
+        raw = self.model.predict(
+            features.values if self.scaler is None
+            else self.scaler.transform(features.values)
+        )
+        labels = np.array([LABEL_MAP.get(int(p), str(p)) for p in raw])
+        return self._build_results(df, labels)
+
+    def _build_results(self, df, labels):
+        total = len(labels)
+        all_classes = ["Benign","Real Attack","Masquerade","Suspension"]
+        counts      = {k: int(np.sum(labels==k)) for k in all_classes}
+        has_attack  = any(labels != "Benign")
+        id_col = next((c for c in df.columns if c.lower() in ["can_id","id"]), None)
+        ts_col = next((c for c in df.columns if c.lower() in ["timestamp","time"]), None)
+
+        idxs = np.sort(np.random.choice(total, min(500,total), replace=False))
+        rows = []
+        for i in idxs:
+            pred   = labels[i]
+            ts_val = float(df.iloc[i][ts_col]) if ts_col else i*0.001
+            id_val = int(df.iloc[i][id_col]) if id_col else 0
+            rows.append({
+                "index": int(i+1), "timestamp": f"{ts_val:.3f}",
+                "can_id": f"0x{id_val:03X}", "prediction": pred,
+                "risk": RISK_MAP.get(pred,"Low"),
+                "status": STATUS_MAP.get(pred,"Normal"),
+            })
+
+        n_buckets = 20
+        bs = max(1, total // n_buckets)
+        tl = [str(i*bs) for i in range(n_buckets)]
+        def series(t):
+            return [int(np.sum(labels[i*bs:(i+1)*bs]==t)) for i in range(n_buckets)]
+
+        return {
+            "total": total, "counts": counts,
+            "has_attack": has_attack,
+            "risk_level": "HIGH" if has_attack else "LOW",
+            "rows": rows,
+            "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "chart": {
+                "pie": [counts[k] for k in all_classes],
+                "bar": [counts[k] for k in all_classes],
+                "area": {
+                    "labels":     tl, "benign":     series("Benign"),
+                    "masquerade": series("Masquerade"),
+                    "real_attack":series("Real Attack"),
+                    "suspension": series("Suspension"),
+                },
+            },
+        }</pre>
+</div>
+
+<div class="page">
+<!-- CH 6: FEATURES -->
+<h2 class="chapter" id="ch6">6. Source Code — Feature Engineering (ml/features.py)</h2>
+<p>Used during model <strong>training</strong>. Extracts 17 statistical and temporal features from raw CAN Bus frames using O(n log n) algorithms via <code class="inline">np.searchsorted</code>.</p>
+
+<h3 class="section">6.1 Features Extracted</h3>
+<table class="data-table">
+<thead><tr><th>Feature</th><th>Description</th><th>Type</th></tr></thead>
+<tbody>
+<tr><td>can_id</td><td>Numeric CAN arbitration ID</td><td>Temporal</td></tr>
+<tr><td>inter_arrival_time</td><td>Time gap between frames with same CAN ID</td><td>Temporal</td></tr>
+<tr><td>global_iat</td><td>Time gap between all consecutive frames</td><td>Temporal</td></tr>
+<tr><td>id_freq_1s</td><td>Frequency of this CAN ID in ±0.5s window</td><td>Temporal</td></tr>
+<tr><td>global_rate</td><td>Total messages in ±0.5s window</td><td>Temporal</td></tr>
+<tr><td>byte_mean / std / min / max</td><td>Statistics of 8 data bytes</td><td>Payload</td></tr>
+<tr><td>byte_range / byte_sum</td><td>Range and sum of payload bytes</td><td>Payload</td></tr>
+<tr><td>unique_bytes</td><td>Count of distinct byte values in payload</td><td>Payload</td></tr>
+<tr><td>zero_ratio / ff_ratio</td><td>Fraction of 0x00 / 0xFF bytes</td><td>Payload</td></tr>
+<tr><td>consecutive_same_id</td><td>Run-length of identical CAN IDs</td><td>Structural</td></tr>
+<tr><td>id_entropy</td><td>Shannon entropy of last 20 CAN IDs</td><td>Structural</td></tr>
+<tr><td>odd_id</td><td>1 if CAN_ID &gt; 0x7FF (extended frame)</td><td>Structural</td></tr>
+</tbody>
+</table>
+
+<div class="file-header">
+  <span class="file-badge">Python · numpy</span>
+  <span class="file-name">ml/features.py</span>
+  <span class="file-desc">Feature extraction — 130 lines</span>
+</div>
+<pre>"""Feature Engineering — 17 features extracted from raw CAN CSV"""
+
+import numpy as np
+import pandas as pd
+from collections import defaultdict
+
+BYTE_COLS = ['Byte1','Byte2','Byte3','Byte4','Byte5','Byte6','Byte7','Byte8']
+
+def extract_features(df: pd.DataFrame) -> pd.DataFrame:
+    df  = df.copy().reset_index(drop=True)
+    n   = len(df)
+    lc  = {c.lower(): c for c in df.columns}
+
+    # --- Column detection ---
+    ts_col = next((lc[k] for k in ['timestamp','time','ts'] if k in lc), None)
+    id_col = next((lc[k] for k in ['can_id','id','canid'] if k in lc), None)
+    byte_cols = [lc[b] for b in ['byte1','byte2','byte3','byte4',
+                                  'byte5','byte6','byte7','byte8'] if b in lc]
+
+    ts   = pd.to_numeric(df[ts_col], errors='coerce').ffill().fillna(0).values \
+           if ts_col else np.arange(n)*0.001
+    ids  = pd.to_numeric(df[id_col], errors='coerce').fillna(0).astype(int).values \
+           if id_col else np.zeros(n, int)
+    bmat = df[byte_cols].apply(pd.to_numeric, errors='coerce').fillna(0).values \
+           if len(byte_cols)==8 else np.zeros((n,8))
+
+    # --- Temporal features ---
+    global_iat     = np.zeros(n)
+    global_iat[1:] = np.clip(np.diff(ts), 0, 10)
+    per_id_iat     = _per_id_iat(ids, ts)
+    id_freq        = _id_freq(ids, ts, half_win=0.5)
+    global_rate    = _global_rate(ts, half_win=0.5)
+    consec         = _consecutive_same_id(ids)
+    id_ent         = _rolling_entropy(ids, win=20)
+
+    # --- Byte features ---
+    return pd.DataFrame({
+        'can_id': ids.astype(float),
+        'inter_arrival_time': per_id_iat, 'global_iat': global_iat,
+        'id_freq_1s': id_freq,            'global_rate': global_rate,
+        'byte_mean':  bmat.mean(1),       'byte_std':    bmat.std(1),
+        'byte_min':   bmat.min(1),        'byte_max':    bmat.max(1),
+        'byte_range': bmat.max(1)-bmat.min(1),
+        'unique_bytes': np.array([len(np.unique(r)) for r in bmat], dtype=float),
+        'zero_ratio':   (bmat==0).mean(1),
+        'ff_ratio':     (bmat==255).mean(1),
+        'consecutive_same_id': consec.astype(float),
+        'id_entropy':          id_ent,
+        'byte_sum':            bmat.sum(1),
+        'odd_id':              (ids > 0x7FF).astype(float),
+    }).fillna(0)
+
+def _per_id_iat(ids, ts):
+    iat = np.zeros(len(ids)); last = {}
+    for i,(cid,t) in enumerate(zip(ids,ts)):
+        if cid in last: iat[i] = min(t-last[cid], 10.0)
+        last[cid] = t
+    return iat
+
+def _id_freq(ids, ts, half_win=0.5):
+    freq = np.zeros(len(ids)); groups = defaultdict(list)
+    for i,cid in enumerate(ids): groups[cid].append(i)
+    for cid,idxs in groups.items():
+        arr=np.asarray(idxs); t=ts[arr]; ts2=np.sort(t)
+        lo=np.searchsorted(ts2,t-half_win,'left')
+        hi=np.searchsorted(ts2,t+half_win,'right')
+        freq[arr]=hi-lo
+    return freq
+
+def _global_rate(ts, half_win=0.5):
+    t_sort=np.sort(ts)
+    lo=np.searchsorted(t_sort,ts-half_win,'left')
+    hi=np.searchsorted(t_sort,ts+half_win,'right')
+    return (hi-lo).astype(float)
+
+def _consecutive_same_id(ids):
+    c=np.ones(len(ids),int)
+    for i in range(1,len(ids)):
+        c[i]=c[i-1]+1 if ids[i]==ids[i-1] else 1
+    return c
+
+def _rolling_entropy(ids, win=20):
+    ent=np.zeros(len(ids))
+    for i in range(len(ids)):
+        w=ids[max(0,i-win+1):i+1]; _,cnts=np.unique(w,return_counts=True)
+        p=cnts/cnts.sum()
+        ent[i]=float(-np.sum(p*np.log2(p+1e-12))) if len(p)>1 else 0.0
+    return ent</pre>
+</div>
+
+<div class="page">
+<!-- CH 7: TRAIN.PY -->
+<h2 class="chapter" id="ch7">7. Source Code — Model Training (ml/train.py)</h2>
+<p>Command-line training script. Loads uploaded CSVs, balances classes, extracts features in 50k-row chunks, trains a Random Forest classifier, and saves the model to disk.</p>
+
+<div class="info-box yellow">
+  <strong>Usage:</strong>
+  <code class="inline">python ml/train.py --auto</code> &nbsp;(loads all CSVs from static/uploads/)<br>
+  <code class="inline">python ml/train.py --data dataset.csv --label Label</code> &nbsp;(specific file)
+</div>
+
+<div class="file-header">
+  <span class="file-badge">Python · sklearn</span>
+  <span class="file-name">ml/train.py</span>
+  <span class="file-desc">Training pipeline — 150 lines</span>
+</div>
+<pre>"""CAN Bus IDS — Model Training Script"""
+
+import sys, os, glob, argparse
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
+import numpy as np
+import pandas as pd
+import joblib
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score
+from sklearn.metrics import classification_report, accuracy_score
+from ml.features import extract_features
+
+MODEL_DIR   = os.path.join("ml","model")
+MODEL_PATH  = os.path.join(MODEL_DIR,"canids_model.joblib")
+SCALER_PATH = os.path.join(MODEL_DIR,"canids_scaler.joblib")
+REPORT_PATH = os.path.join(MODEL_DIR,"canids_report.txt")
+
+def normalise_label(val, filename=""):
+    v = str(val).strip().lower()
+    if v in ('0','0.0'):     return "Benign"
+    if v in ('1','1.0'):
+        fn=filename.lower()
+        if "masquerade" in fn: return "Masquerade"
+        if "real"       in fn: return "Real Attack"
+        if "suspension" in fn: return "Suspension"
+        return "Masquerade"
+    if v in ('2','2.0'):     return "Real Attack"
+    if v in ('3','3.0'):     return "Suspension"
+    if any(x in v for x in ['benign','normal']): return "Benign"
+    if any(x in v for x in ['masquerade','spoof']): return "Masquerade"
+    if any(x in v for x in ['real','inject']):      return "Real Attack"
+    if any(x in v for x in ['suspension','dos']):   return "Suspension"
+    if v == 'attack':
+        fn=filename.lower()
+        if "masquerade" in fn: return "Masquerade"
+        if "real"       in fn: return "Real Attack"
+        return "Masquerade"
+    return "Benign"
+
+def train(auto=False, data_path=None, label_col_override=None):
+    os.makedirs(MODEL_DIR, exist_ok=True)
+
+    # 1. Load data
+    if auto:
+        files = glob.glob(os.path.join("static","uploads","*.csv"))
+        dfs = []
+        for f in files:
+            df = pd.read_csv(f, low_memory=False)
+            lcol = next((c for c in df.columns if c.lower()=="label"), None)
+            if lcol:
+                df["_label"] = df[lcol].apply(lambda x: normalise_label(x,os.path.basename(f)))
+                dfs.append(df)
+        df = pd.concat(dfs, ignore_index=True)
+    else:
+        df = pd.read_csv(data_path, low_memory=False)
+        lcol = label_col_override or "Label"
+        df["_label"] = df[lcol].apply(lambda x: normalise_label(x, data_path))
+
+    print(f"Dataset: {len(df):,} rows")
+    print("Labels:", df["_label"].value_counts().to_dict())
+
+    # 2. Balance classes (max 150k per class)
+    parts = []
+    for lbl in df["_label"].unique():
+        part = df[df["_label"]==lbl]
+        if len(part) > 150_000: part = part.sample(150_000, random_state=42)
+        parts.append(part)
+    df_bal = pd.concat(parts).sample(frac=1, random_state=42)
+
+    # 3. Feature extraction in chunks
+    feat_parts = []
+    for start in range(0, len(df_bal), 50_000):
+        chunk = df_bal.iloc[start:start+50_000]
+        feat_parts.append(extract_features(chunk.drop(columns=["_label"])))
+    X_df = pd.concat(feat_parts, ignore_index=True)
+    y    = df_bal["_label"].values
+
+    # 4. Scale + train
+    scaler  = StandardScaler()
+    X       = scaler.fit_transform(X_df.values)
+    X_train,X_test,y_train,y_test = train_test_split(X, y, test_size=0.2,
+                                       random_state=42, stratify=y)
+
+    model = RandomForestClassifier(
+        n_estimators=200, max_depth=None, min_samples_leaf=1,
+        class_weight="balanced", n_jobs=-1, random_state=42
+    )
+    model.fit(X_train, y_train)
+
+    # 5. Evaluate
+    y_pred = model.predict(X_test)
+    acc    = accuracy_score(y_test, y_pred)
+    report = classification_report(y_test, y_pred, target_names=sorted(set(y)))
+    print(f"Test Accuracy: {acc*100:.2f}%")
+    print(report)
+
+    # 6. Save
+    joblib.dump(model,  MODEL_PATH)
+    joblib.dump(scaler, SCALER_PATH)
+    with open(REPORT_PATH,"w") as f:
+        f.write(f"Test Accuracy: {acc*100:.2f}%\n\n{report}")
+    print(f"Model saved → {MODEL_PATH}")
+
+if __name__ == "__main__":
+    p = argparse.ArgumentParser()
+    p.add_argument("--data",  default=None)
+    p.add_argument("--label", default=None)
+    p.add_argument("--auto",  action="store_true")
+    args = p.parse_args()
+    train(auto=args.auto, data_path=args.data, label_col_override=args.label)</pre>
+</div>

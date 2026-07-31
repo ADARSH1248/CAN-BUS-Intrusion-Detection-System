@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CAN Bus IDS | Home</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body class="ids-body">
+
+  <!-- FLASH MESSAGES -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-wrap position-fixed top-0 start-50 translate-middle-x mt-2" style="z-index:9999;min-width:340px;">
+        {% for cat, msg in messages %}
+          <div class="alert alert-{{ 'danger' if cat=='error' else 'warning' }} alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-{{ 'circle-exclamation' if cat=='error' else 'triangle-exclamation' }} me-2"></i>{{ msg }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg ids-navbar fixed-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('index') }}">
+        <span class="brand-icon"><i class="fa-solid fa-shield-halved"></i></span>
+        <span class="brand-text">CAN<span class="brand-accent">IDS</span></span>
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <i class="fa-solid fa-bars text-cyan"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto gap-1 align-items-lg-center">
+          <li class="nav-item"><a class="nav-link active" href="#hero">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+          <li class="nav-item ms-2">
+            <a class="btn btn-cyan-gradient px-3" href="{{ url_for('upload') }}">
+              <i class="fa-solid fa-upload me-1"></i>Upload Dataset
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero" class="hero-section">
+    <canvas id="networkCanvas" class="network-canvas"></canvas>
+    <div class="hero-overlay"></div>
+    <div class="container position-relative" style="z-index:2;">
+      <div class="row align-items-center min-vh-100 py-5">
+        <div class="col-lg-7 hero-content">
+          <div class="hero-badge mb-3"><span class="pulse-dot"></span><span>ML-Powered Cybersecurity</span></div>
+          <h1 class="hero-title">
+            CAN Bus<br/>
+            <span class="gradient-text">Intrusion Detection</span><br/>System
+          </h1>
+          <p class="hero-subtitle mt-3">Machine Learning Based Vehicle Network Security</p>
+          <p class="hero-desc mt-2 mb-4">
+            Detect and classify cyber attacks on vehicle CAN Bus communication
+            in real time using advanced Machine Learning techniques.
+          </p>
+          <div class="d-flex flex-wrap gap-3">
+            <a href="{{ url_for('upload') }}" class="btn btn-cyan-gradient btn-lg px-4">
+              <i class="fa-solid fa-upload me-2"></i>Upload Dataset
+            </a>
+            <a href="#about" class="btn btn-outline-cyan btn-lg px-4">
+              <i class="fa-solid fa-circle-info me-2"></i>Learn More
+            </a>
+          </div>
+          <div class="hero-stats d-flex flex-wrap gap-4 mt-5">
+            <div class="stat-item"><span class="stat-num">4</span><span class="stat-label">Attack Types</span></div>
+            <div class="stat-divider"></div>
+            <div class="stat-item"><span class="stat-num">ML</span><span class="stat-label">Powered Engine</span></div>
+            <div class="stat-divider"></div>
+            <div class="stat-item"><span class="stat-num">99%</span><span class="stat-label">Accuracy</span></div>
+          </div>
+        </div>
+        <div class="col-lg-5 d-none d-lg-flex justify-content-center align-items-center">
+          <div class="hero-graphic">
+            <div class="graphic-ring ring-1"></div>
+            <div class="graphic-ring ring-2"></div>
+            <div class="graphic-ring ring-3"></div>
+            <div class="graphic-center">
+              <i class="fa-solid fa-car-side graphic-icon"></i>
+              <div class="scan-line"></div>
+            </div>
+            <div class="orbit-dot dot-1"><i class="fa-solid fa-shield"></i></div>
+            <div class="orbit-dot dot-2"><i class="fa-solid fa-brain"></i></div>
+            <div class="orbit-dot dot-3"><i class="fa-solid fa-lock"></i></div>
+            <div class="orbit-dot dot-4"><i class="fa-solid fa-bolt"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-indicator"><span></span><span></span><span></span></div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="section-pad">
+    <div class="container">
+      <div class="section-header text-center mb-5">
+        <span class="section-tag">About the System</span>
+        <h2 class="section-title mt-2">Understanding <span class="gradient-text">CAN Bus Security</span></h2>
+        <p class="section-sub">A deep dive into vehicle communication and why protecting it matters.</p>
+      </div>
+      <div class="row g-4 mb-5">
+        <div class="col-md-6">
+          <div class="glass-card h-100 p-4">
+            <div class="card-icon-wrap mb-3"><i class="fa-solid fa-network-wired"></i></div>
+            <h5 class="card-title-custom">What is CAN Bus?</h5>
+            <p class="card-text-custom">The Controller Area Network (CAN) Bus is a robust vehicle communication protocol that allows microcontrollers and devices to communicate without a host computer. It connects ECUs like the engine, brakes, steering, and infotainment into a single network.</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="glass-card h-100 p-4">
+            <div class="card-icon-wrap mb-3 icon-red"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <h5 class="card-title-custom">Why is Security Critical?</h5>
+            <p class="card-text-custom">Modern vehicles are increasingly connected to the internet and smartphones. The CAN Bus was designed without security in mind, making it vulnerable to injection, spoofing, and DoS attacks. A compromised CAN Bus lets an attacker control braking, steering, or engine functions remotely.</p>
+          </div>
+        </div>
+      </div>
+      <div class="section-header text-center mb-4">
+        <h4 class="section-title">Detected <span class="gradient-text">Attack Types</span></h4>
+      </div>
+      <div class="row g-4">
+        <div class="col-sm-6 col-lg-3">
+          <div class="attack-card glass-card p-4 text-center h-100">
+            <div class="attack-icon attack-icon-green mb-3"><i class="fa-solid fa-circle-check"></i></div>
+            <h6 class="attack-title">Benign Traffic</h6>
+            <p class="attack-desc">Normal, legitimate CAN messages with no malicious activity detected.</p>
+            <span class="attack-badge badge-benign">SAFE</span>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <div class="attack-card glass-card p-4 text-center h-100">
+            <div class="attack-icon attack-icon-yellow mb-3"><i class="fa-solid fa-user-secret"></i></div>
+            <h6 class="attack-title">Masquerade Attack</h6>
+            <p class="attack-desc">Attacker impersonates a legitimate ECU to inject false commands.</p>
+            <span class="attack-badge badge-warning-custom">WARNING</span>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <div class="attack-card glass-card p-4 text-center h-100">
+            <div class="attack-icon attack-icon-red mb-3"><i class="fa-solid fa-bomb"></i></div>
+            <h6 class="attack-title">Real Attack</h6>
+            <p class="attack-desc">Active, confirmed malicious CAN frame injection targeting vehicle systems.</p>
+            <span class="attack-badge badge-danger-custom">CRITICAL</span>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <div class="attack-card glass-card p-4 text-center h-100">
+            <div class="attack-icon attack-icon-orange mb-3"><i class="fa-solid fa-car-burst"></i></div>
+            <h6 class="attack-title">Suspension Attack</h6>
+            <p class="attack-desc">Targeted disruption of suspension-related ECU control signals.</p>
+            <span class="attack-badge badge-danger-custom">HIGH RISK</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" class="section-pad features-bg">
+    <div class="container">
+      <div class="section-header text-center mb-5">
+        <span class="section-tag">Capabilities</span>
+        <h2 class="section-title mt-2">System <span class="gradient-text">Features</span></h2>
+        <p class="section-sub">Everything you need to analyze and protect vehicle CAN networks.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-sm-6 col-lg-3">
+          <div class="feature-card glass-card p-4 text-center h-100">
+            <div class="feature-icon-wrap mb-4"><i class="fa-solid fa-satellite-dish"></i></div>
+            <h5 class="feature-title">Real-Time Detection</h5>
+            <p class="feature-desc">Monitor and analyze CAN Bus traffic with minimal latency using optimized ML inference.</p>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <div class="feature-card glass-card p-4 text-center h-100">
+            <div class="feature-icon-wrap mb-4"><i class="fa-solid fa-brain"></i></div>
+            <h5 class="feature-title">Machine Learning</h5>
+            <p class="feature-desc">Trained Random Forest models classify traffic patterns and detect anomalies with high precision.</p>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <div class="feature-card glass-card p-4 text-center h-100">
+            <div class="feature-icon-wrap mb-4"><i class="fa-solid fa-bolt"></i></div>
+            <h5 class="feature-title">Fast Prediction</h5>
+            <p class="feature-desc">Batch prediction on large CSV datasets with optimized feature extraction pipelines.</p>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <div class="feature-card glass-card p-4 text-center h-100">
+            <div class="feature-icon-wrap mb-4"><i class="fa-solid fa-chart-pie"></i></div>
+            <h5 class="feature-title">Attack Analysis</h5>
+            <p class="feature-desc">Visual breakdown of attack types, risk levels, and detailed per-message analysis.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="section-pad">
+    <div class="container">
+      <div class="section-header text-center mb-5">
+        <span class="section-tag">Get In Touch</span>
+        <h2 class="section-title mt-2">Contact <span class="gradient-text">Us</span></h2>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="glass-card p-5">
+            <div class="row g-4">
+              <div class="col-md-6">
+                <div class="contact-info-item">
+                  <span class="contact-info-icon"><i class="fa-solid fa-building"></i></span>
+                  <div><p class="info-label">Institution</p><p class="info-value">NMAM Institute of Technology, Nitte</p></div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="contact-info-item">
+                  <span class="contact-info-icon"><i class="fa-solid fa-graduation-cap"></i></span>
+                  <div><p class="info-label">Department</p><p class="info-value">Computer Science &amp; Engineering</p></div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="contact-info-item">
+                  <span class="contact-info-icon"><i class="fa-solid fa-user"></i></span>
+                  <div><p class="info-label">Designed By</p><p class="info-value">Adarsh Bhat</p></div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="contact-info-item">
+                  <span class="contact-info-icon"><i class="fa-solid fa-flask"></i></span>
+                  <div><p class="info-label">Project Type</p><p class="info-value">Final Year Engineering Project</p></div>
+                </div>
+              </div>
+            </div>
+            <div class="text-center mt-5">
+              <a href="{{ url_for('upload') }}" class="btn btn-cyan-gradient btn-lg px-5">
+                <i class="fa-solid fa-rocket me-2"></i>Launch System
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="ids-footer">
+    <div class="container">
+      <div class="row align-items-center gy-3">
+        <div class="col-md-4 text-center text-md-start">
+          <div class="brand-text footer-brand">CAN<span class="brand-accent">IDS</span></div>
+          <p class="footer-tagline">Vehicle Network Security System</p>
+        </div>
+        <div class="col-md-4 text-center">
+          <p class="footer-inst mb-1">Department of Computer Science</p>
+          <p class="footer-inst mb-1">Final Year Engineering Project</p>
+          <p class="footer-inst fw-semibold mb-0">NMAM Institute of Technology</p>
+        </div>
+        <div class="col-md-4 text-center text-md-end">
+          <p class="footer-designed mb-1">Designed by <span class="text-cyan fw-semibold">Adarsh Bhat</span></p>
+          <p class="footer-copy mb-0">&copy; 2025 CAN Bus IDS. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

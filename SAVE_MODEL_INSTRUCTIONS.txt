@@ -1,0 +1,13 @@
+﻿# Save your trained model — add this cell to the end of Combined_CanBus.ipynb:
+
+import joblib
+
+# Save the RandomForest model (or whichever model you want to use)
+joblib.dump(rf_model, 'canids_model.joblib')
+print('✓ Model saved → canids_model.joblib')
+
+# Then download it:
+from google.colab import files
+files.download('canids_model.joblib')
+
+# Copy that file to:  ml/model/canids_model.joblib
